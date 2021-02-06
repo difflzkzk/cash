@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.gdu.cash.restMapper.CashStatsMapper">
+	<select id="selectTotalOutAndInByYear" parameterType="int" resultType="java.util.Map">
+		SELECT YEAR(cashbook_date) '년',
+		sum(case when cashbook_kind='수입' then cashbook_price END) '수입',
+		sum(case when cashbook_kind='지출' then cashbook_price END) '지출'
+		FROM cashbook
+		WHERE YEAR(cashbook_date) = #{year}
+		GROUP BY Year(cashbook_date)
+	</select>
+	<!-- 2020년 월별 수입 -->
+	<select id="selectTotalOfMonthByInYear" resultType="java.util.Map">
+		SELECT
+			YEAR(cashbook_date) AS year,
+			sum(case when month(cashbook_date)=1 then cashbook_price END) january,
+			sum(case when month(cashbook_date)=2 then cashbook_price END) february,
+			sum(case when month(cashbook_date)=3 then cashbook_price END) march,
+			sum(case when month(cashbook_date)=4 then cashbook_price END) april,
+			sum(case when month(cashbook_date)=5 then cashbook_price END) may,
+			sum(case when month(cashbook_date)=6 then cashbook_price END) june,
+			sum(case when month(cashbook_date)=7 then cashbook_price END) july,
+			sum(case when month(cashbook_date)=8 then cashbook_price END) august,
+			sum(case when month(cashbook_date)=9 then cashbook_price END) september,
+			sum(case when month(cashbook_date)=10 then cashbook_price END) october,
+			sum(case when month(cashbook_date)=11 then cashbook_price END) november,
+			sum(case when month(cashbook_date)=12 then cashbook_price END) december
+			FROM cashbook
+		WHERE YEAR(cashbook_date) = 2020 AND cashbook_kind = "수입"
+		GROUP BY Year(cashbook_date)
+	</select>
+	<!-- chart 1,2. 2020년 월별 지출 -->
+	<select id="selectTotalOfMonthByYear" resultType="java.util.Map">
+		SELECT
+			YEAR(cashbook_date) AS year,
+			sum(case when month(cashbook_date)=1 then cashbook_price END) january,
+			sum(case when month(cashbook_date)=2 then cashbook_price END) february,
+			sum(case when month(cashbook_date)=3 then cashbook_price END) march,
+			sum(case when month(cashbook_date)=4 then cashbook_price END) april,
+			sum(case when month(cashbook_date)=5 then cashbook_price END) may,
+			sum(case when month(cashbook_date)=6 then cashbook_price END) june,
+			sum(case when month(cashbook_date)=7 then cashbook_price END) july,
+			sum(case when month(cashbook_date)=8 then cashbook_price END) august,
+			sum(case when month(cashbook_date)=9 then cashbook_price END) september,
+			sum(case when month(cashbook_date)=10 then cashbook_price END) october,
+			sum(case when month(cashbook_date)=11 then cashbook_price END) november,
+			sum(case when month(cashbook_date)=12 then cashbook_price END) december
+			FROM cashbook
+		WHERE YEAR(cashbook_date) = 2020 AND cashbook_kind = "지출"
+		GROUP BY Year(cashbook_date)
+	</select>
+	<!-- chart2. 2019년 월별 지출 -->
+	<select id="selectTotalOfMonthByLastYear" resultType="java.util.Map">
+		SELECT
+			YEAR(cashbook_date) AS year,
+			sum(case when month(cashbook_date)=1 then cashbook_price END) january,
+			sum(case when month(cashbook_date)=2 then cashbook_price END) february,
+			sum(case when month(cashbook_date)=3 then cashbook_price END) march,
+			sum(case when month(cashbook_date)=4 then cashbook_price END) april,
+			sum(case when month(cashbook_date)=5 then cashbook_price END) may,
+			sum(case when month(cashbook_date)=6 then cashbook_price END) june,
+			sum(case when month(cashbook_date)=7 then cashbook_price END) july,
+			sum(case when month(cashbook_date)=8 then cashbook_price END) august,
+			sum(case when month(cashbook_date)=9 then cashbook_price END) september,
+			sum(case when month(cashbook_date)=10 then cashbook_price END) october,
+			sum(case when month(cashbook_date)=11 then cashbook_price END) november,
+			sum(case when month(cashbook_date)=12 then cashbook_price END) december
+			FROM cashbook
+		WHERE YEAR(cashbook_date) = 2019 AND cashbook_kind = "지출"
+		GROUP BY Year(cashbook_date)
+	</select>
+	<!-- chart. 2018년 월별 지출 -->
+	<select id="selectTotalOfMonthByBeforeLastYear" resultType="java.util.Map">
+		SELECT
+			YEAR(cashbook_date) AS year,
+			sum(case when month(cashbook_date)=1 then cashbook_price END) january,
+			sum(case when month(cashbook_date)=2 then cashbook_price END) february,
+			sum(case when month(cashbook_date)=3 then cashbook_price END) march,
+			sum(case when month(cashbook_date)=4 then cashbook_price END) april,
+			sum(case when month(cashbook_date)=5 then cashbook_price END) may,
+			sum(case when month(cashbook_date)=6 then cashbook_price END) june,
+			sum(case when month(cashbook_date)=7 then cashbook_price END) july,
+			sum(case when month(cashbook_date)=8 then cashbook_price END) august,
+			sum(case when month(cashbook_date)=9 then cashbook_price END) september,
+			sum(case when month(cashbook_date)=10 then cashbook_price END) october,
+			sum(case when month(cashbook_date)=11 then cashbook_price END) november,
+			sum(case when month(cashbook_date)=12 then cashbook_price END) december
+			FROM cashbook
+		WHERE YEAR(cashbook_date) = 2018 AND cashbook_kind = "지출"
+		GROUP BY Year(cashbook_date)
+	</select>
+	<!-- chart3. 최근 3개월간 카테고리 별 지출 -->
+	<select id="selectCategoryForThreeMonth" resultType="java.util.Map">
+		SELECT sum(case when category_name='식비' AND MONTH(cashbook_date) = DATE_FORMAT(NOW(),'%m') 
+						then cashbook_price END) currentFood,
+				sum(case when category_name='식비' AND MONTH(cashbook_date) = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%m') 
+						then cashbook_price END) lastFood,
+				sum(case when category_name='식비' AND MONTH(cashbook_date) = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 2 MONTH), '%m') 
+						then cashbook_price END) beforeLastFood,
+				sum(case when category_name='생활' AND MONTH(cashbook_date) = DATE_FORMAT(NOW(),'%m') 
+						then cashbook_price END) currentLife,
+				sum(case when category_name='생활' AND MONTH(cashbook_date) = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%m') 
+						then cashbook_price END) lastLife,
+				sum(case when category_name='생활' AND MONTH(cashbook_date) = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 2 MONTH), '%m') 
+						then cashbook_price END) beforeLastLife,
+				sum(case when category_name='관광' AND MONTH(cashbook_date) = DATE_FORMAT(NOW(),'%m') 
+						then cashbook_price END) currentTrip,
+				sum(case when category_name='관광' AND MONTH(cashbook_date) = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%m') 
+						then cashbook_price END) lastTrip,
+				sum(case when category_name='관광' AND MONTH(cashbook_date) = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 2 MONTH), '%m') 
+						then cashbook_price END) beforeLastTrip,
+				sum(case when category_name='의료' AND MONTH(cashbook_date) = DATE_FORMAT(NOW(),'%m') 
+						then cashbook_price END) currentMedical,
+				sum(case when category_name='의료' AND MONTH(cashbook_date) = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%m') 
+						then cashbook_price END) lastMedical,
+				sum(case when category_name='의료' AND MONTH(cashbook_date) = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 2 MONTH), '%m')
+						then cashbook_price END) beforeLastMedical,
+				sum(case when category_name='통신' AND MONTH(cashbook_date) = DATE_FORMAT(NOW(),'%m') 
+						then cashbook_price END) currentPhone,
+				sum(case when category_name='통신' AND MONTH(cashbook_date) = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%m')  
+						then cashbook_price END) lastPhone,
+				sum(case when category_name='통신' AND MONTH(cashbook_date) = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 2 MONTH), '%m')  
+						then cashbook_price END) beforeLastPhone,
+				DATE_FORMAT(NOW(),'%m') currentMonth,
+				DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%m') lastMonth,
+				DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 2 MONTH), '%m') beforeLastMonth
+		FROM cashbook
+		WHERE YEAR(cashbook_date) = 2020
+	</select>
+	<!-- chart4. 18년~올해 총 지출 -->
+	<select id="selectTotalofYearForThreeYear" resultType="java.util.Map">
+		SELECT sum(case when YEAR(cashbook_date)=2018 then cashbook_price END) beforeLastExpense,
+				sum(case when YEAR(cashbook_date)=2019 then cashbook_price END) lastYearExpense,
+				sum(case when YEAR(cashbook_date)=2020 then cashbook_price END) currentYearExpense,
+				DATE_FORMAT(NOW(),'%y') currentYear,
+				DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 YEAR), '%y') lastYear,
+				DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 2 YEAR), '%y') beforeLastYear
+		FROM cashbook
+		WHERE cashbook_kind='지출'
+	</select>
+	<!-- chart5. 올해 카테고리별 지출 빈도 -->
+	<select id="selectCategoryForYear" resultType="java.util.Map">
+		SELECT COUNT(case when category_name='식비' then category_name END) food,
+				COUNT(case when category_name='생활' then category_name END) life,
+				COUNT(case when category_name='관광' then category_name END) trip,
+				COUNT(case when category_name='의료' then category_name END) medical,
+				COUNT(case when category_name='통신' then category_name END) phone
+				FROM cashbook
+		WHERE YEAR(cashbook_date) = 2020
+	</select>
+	<!-- chart6. 올해 매월 수입, 지출액수 차이 -->
+	<select id='selectTotalofInOut' resultType="java.util.Map">
+		SELECT SUM(case when cashbook_kind='수입' AND MONTH(cashbook_date)=1 then cashbook_price END)
+				-SUM(case when cashbook_kind='지출' AND MONTH(cashbook_date)=1 then cashbook_price END) january,
+				SUM(case when cashbook_kind='수입' AND MONTH(cashbook_date)=2 then cashbook_price END)
+				-SUM(case when cashbook_kind='지출' AND MONTH(cashbook_date)=2 then cashbook_price END) february,
+				SUM(case when cashbook_kind='수입' AND MONTH(cashbook_date)=3 then cashbook_price END)
+				-SUM(case when cashbook_kind='지출' AND MONTH(cashbook_date)=3 then cashbook_price END) march,
+				SUM(case when cashbook_kind='수입' AND MONTH(cashbook_date)=4 then cashbook_price END)
+				-SUM(case when cashbook_kind='지출' AND MONTH(cashbook_date)=4 then cashbook_price END) april,
+				SUM(case when cashbook_kind='수입' AND MONTH(cashbook_date)=5 then cashbook_price END)
+				-SUM(case when cashbook_kind='지출' AND MONTH(cashbook_date)=5 then cashbook_price END) may,
+				SUM(case when cashbook_kind='수입' AND MONTH(cashbook_date)=6 then cashbook_price END)
+				-SUM(case when cashbook_kind='지출' AND MONTH(cashbook_date)=6 then cashbook_price END) june,
+				SUM(case when cashbook_kind='수입' AND MONTH(cashbook_date)=7 then cashbook_price END)
+				-SUM(case when cashbook_kind='지출' AND MONTH(cashbook_date)=7 then cashbook_price END) july,
+				SUM(case when cashbook_kind='수입' AND MONTH(cashbook_date)=8 then cashbook_price END)
+				-SUM(case when cashbook_kind='지출' AND MONTH(cashbook_date)=8 then cashbook_price END) august,
+				SUM(case when cashbook_kind='수입' AND MONTH(cashbook_date)=9 then cashbook_price END)
+				-SUM(case when cashbook_kind='지출' AND MONTH(cashbook_date)=9 then cashbook_price END) september,
+				SUM(case when cashbook_kind='수입' AND MONTH(cashbook_date)=10 then cashbook_price END)
+				-SUM(case when cashbook_kind='지출' AND MONTH(cashbook_date)=10 then cashbook_price END) october,
+				SUM(case when cashbook_kind='수입' AND MONTH(cashbook_date)=11 then cashbook_price END)
+				-SUM(case when cashbook_kind='지출' AND MONTH(cashbook_date)=11 then cashbook_price END) november,
+				SUM(case when cashbook_kind='수입' AND MONTH(cashbook_date)=12 then cashbook_price END)
+				-SUM(case when cashbook_kind='지출' AND MONTH(cashbook_date)=12 then cashbook_price END) december
+		FROM cashbook
+		WHERE YEAR(cashbook_date) = 2020
+	</select>
+</mapper>
